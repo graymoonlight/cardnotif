@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Уведомление</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+  <style>
+    .button-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+
+    .ui.button {
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="ui container">
+    <center><h1>Центр уведомлений</h1></center>
+    <notification-message 
+      v-for="(notification, index) in notifications" 
+      :key="index"
+      :type="notification.type" 
+      :message="notification.message" 
+      @close="removeNotification(index)">
+    </notification-message>
+    
+    <div class="button-container">
+      <button class="ui green button" @click="addNotification(' ', 'Вы успешно выполнили задачу!')">Добавить - "Успешное" уведомление</button>
+      <button class="ui red button" @click="addNotification(' ', 'Упс! Что-то пошло не так.')">Добавить - "Ошибку" уведомления</button>
+      <button class="ui blue button" @click="addNotification(' ', 'Вы знали? Vue - здорово!')">Добавить - "Информационное" уведомление</button>
+      <button class="ui yellow button" @click="addNotification(' ', 'Предупреждение! Проверьте ваши настройки.')">Добавить - "Предупреждение" уведомления</button>
+    </div>
+  </div>
+
+  <script type="text/x-template" id="notification-message-template">
+    <div class="ui {{ type }} message" v-if="visible">
+      <i class="close icon" @click="closeNotification"></i>
+      <div class="header">
+        {{ type.charAt(0).toUpperCase() + type.slice(1) }} Уведомление
+      </div>
+      <p>{{ message }}</p>
+    </div>
+  </script>
+  
+  <script src="https://unpkg.com/vue@3"></script>
+  <script>
+    const NotificationMessage = {
+      template: '#notification-message-template',
+      props: ['type', 'message'],
+      data() {
+        return {
+          visible: true
+        }
+      },
+      methods: {
+        closeNotification() {
+          this.visible = false;
+        }
+      }
+    }
+    const app = Vue.createApp({
+      components: {
+        NotificationMessage
+      },
+      data() {
+        return {
+          notifications: []
+        }
+      },
+      methods: {
+        addNotification(type, message) {
+          this.notifications.push({ type, message });
+        },
+        removeNotification(index) {
+          this.notifications.splice(index, 1);
+        }
+      }
+    })
+
+    app.mount('#app')
+  </script>
+</body>
+</html>
+
